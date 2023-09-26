@@ -2,4 +2,5 @@
 
 First challenge of many to teach myself how to code. Will updated README as needed
 
-README editing test
+Project objective (09/25/2023):
+    Build a basic to-do list application where users can add, edit, and delete tasks
