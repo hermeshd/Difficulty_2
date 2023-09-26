@@ -51,62 +51,83 @@ function addTask() {
 }
 
 function toggleActionButtons() {
+
     //Create an array containing all the selected tasks
     const selectedCompletedTasks = Array.from(completedTasksList.querySelectorAll(".task-checkbox:checked"));
     const selectedPendingTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked"));
-    console.log("Pending: " + selectedPendingTasks.length);
-    console.log("Completed: " + selectedCompletedTasks.length);
     
-    // Show or hide the buttons accordingly
-    if (selectedPendingTasks.length === 0 && selectedCompletedTasks.length === 0) {
-        actionButtons.style.display = "none";
-    } else if (selectedPendingTasks.length > 0 || selectedCompletedTasks.length > 0) {
-        actionButtons.style.display = "block"
-
-        // If an item from "Pending" is selected and one or more items from "Completed" were previously selected, uncheck everything from "Completed"
-        if (selectedPendingTasks.length >= 1 && selectedCompletedTasks.length >= 0) { 
-            actionButtons.style.display = "block";
-            markAsCompletedButton.textContent = "Mark Selected As Completed";
-            selectedCompletedTasks.forEach((task) => {
-                task.checked = false;
-            })
-        } else if (selectedCompletedTasks.length >= 1 && selectedPendingTasks >= 0) {
-            actionButtons.style.display = "block";
-            markAsCompletedButton.textContent = "Mark Selected As Pending";
-            selectedPendingTasks.forEach((task) => {
-                task.checked = false;
-            })
-        }
+    // Only show the action buttons when a task is selected
+    if (selectedPendingTasks.length != 0 || selectedCompletedTasks.length != 0) {
+        actionButtons.style.display = "block";
+    } else {
+        actionButtons.style.display = "none"
     }
 }
 
-// Check the status of the buttons everytime either list changes
-taskList.addEventListener("change", toggleActionButtons);
-completedTasksList.addEventListener("change", toggleActionButtons);
+// Check the status of the buttons everytime either list changes and only restrict task selection from one list at a time
+completedTasksList.addEventListener("change", () => {
+
+    const selectedPendingTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked"));
+    toggleActionButtons();
+
+    selectedPendingTasks.forEach((task) => {
+        task.checked = false;
+    });
+    markAsCompletedButton.textContent = "Mark as Pending";
+});
+
+// Check the status of the buttons everytime either list changes and only restrict task selection from one list at a time
+taskList.addEventListener("change", () => {
+    const selectedCompletedTasks = Array.from(completedTasksList.querySelectorAll(".task-checkbox:checked"));
+    toggleActionButtons();
+
+    selectedCompletedTasks.forEach((task) => {
+        task.checked = false;
+    });
+    markAsCompletedButton.textContent = "Mark as Completed";
+});
 
 
 // Action for when the "Delete" button is pressed
 deleteButton.addEventListener("click", () => {
-    const selectedTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked")); // Loop through the checked tasks
-    selectedTasks.forEach((task) => {
+
+    const selectedCompletedTasks = Array.from(completedTasksList.querySelectorAll(".task-checkbox:checked"));
+    const selectedPendingTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked"));
+    
+    selectedPendingTasks.forEach((task) => {
         task.parentElement.remove();
-    })
+    });
+
+    selectedCompletedTasks.forEach((task) => {
+        task.parentElement.remove();
+    });
+
+    //Update buttons status and completed tasks count
     toggleActionButtons();
+    updateCompletedTasksCount();
 })
 
 // Action for when the "Mark as completed" button is pressed
 markAsCompletedButton.addEventListener("click", () => {
+
     // Classify selected tasks as "Completed" and move them to the Completed Tasks list
-    const selectedTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked")); // Loop through the checked tasks
-    selectedTasks.forEach((task) => {
+    const selectedCompletedTasks = Array.from(taskList.querySelectorAll(".task-checkbox:checked")); // Loop through the checked tasks
+    selectedCompletedTasks.forEach((task) => {
         task.parentElement.classList.toggle("Completed"); // Mark as completed
         completedTasksList.appendChild(task.parentElement);
         task.checked = false;
-    })
+    });
 
+    // Do the same as the last part of the code but in reverse
+    const selectedPendingTasks = Array.from(completedTasksList.querySelectorAll(".task-checkbox:checked")); // Loop through the checked tasks
+    selectedPendingTasks.forEach((task) => {
+        task.parentElement.classList.toggle("Completed"); // Mark as completed
+        taskList.appendChild(task.parentElement);
+        task.checked = false;
+    });
+
+    //Update buttons status and completed tasks count
     toggleActionButtons();
-
-    // Update the Completed Tasks List title
     updateCompletedTasksCount();
 })
 
@@ -116,7 +137,7 @@ function updateCompletedTasksCount() {
     var i = 0;
     completedTasksCount.forEach((task) => {
         i = i + 1;
-    })
+    });
     completedTasksTitle.textContent = "Completed tasks (" + i + ")";
 }
 
