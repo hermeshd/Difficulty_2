@@ -8,11 +8,29 @@
 <body>
     <h1>To Do List</h1>
     <div id="task-container">
+
         <input type="text" id="task-input" placeholder="Add a new task...">
         <button id="add-button">Add</button>
-        <ul id="task-list">
+        
+        <p><b>Pending tasks</b></p>
+        <ul id="pending-tasks-list">
 
         </ul>
+        
+        <br>
+        
+        <details>
+            <summary id="completed-tasks-collapsible"><b>Completed tasks (0)</b></summary>
+            <ul id="completed-tasks-list">
+
+            </ul>
+        </details>
+
+    </div>
+
+    <div id="action-buttons" style="display: none">
+        <button id="delete-selected-button">Delete Selected</button>
+        <button id="mark-completed-selected-button">Mark Selected As Completed</button>
     </div>
 
     <script src="static/js/script.js"></script>
